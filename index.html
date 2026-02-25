@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>未来灵感 | Modern Aesthetic</title>
+    <style>
+        /* ================= 现代 CSS 变量 ================= */
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* ================= 全局重置 ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-stack);
+            line-height: 1.6;
+            overflow-x: hidden;
+            /* 动态渐变光晕背景 */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        /* ================= 导航栏 ================= */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        nav.scrolled {
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(5, 5, 5, 0.6);
+        }
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .logo span {
+            color: #a855f7;
+        }
+
+        /* ================= 主视觉区 ================= */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            margin-top: 5vh;
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        }
+
+        /* ================= Bento Grid (便当盒网格) ================= */
+        .bento-container {
+            max-width: 1200px;
+            margin: 0 auto 100px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 280px;
+            gap: 20px;
+        }
+
+        .bento-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .bento-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* 网格布局分配 */
+        .card-large { grid-column: span 2; grid-row: span 2; }
+        .card-wide { grid-column: span 2; grid-row: span 1; }
+        .card-square { grid-column: span 1; grid-row: span 1; }
+        .card-tall { grid-column: span 1; grid-row: span 2; }
+
+        /* 卡片内部元素 */
+        .card-icon {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .bento-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            z-index: 2;
+        }
+        .bento-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            z-index: 2;
+        }
+
+        /* 卡片悬浮光晕效果 */
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        /* ================= 动画关键帧 ================= */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ================= 响应式设计 ================= */
+        @media (max-width: 900px) {
+            .bento-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .card-large, .card-wide, .card-tall, .card-square {
+                grid-column: span 2;
+                grid-row: span 1;
+            }
+        }
+        @media (max-width: 500px) {
+            .bento-container {
+                grid-template-columns: 1fr;
+            }
+            .card-large, .card-wide, .card-tall, .card-square {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="navbar">
+        <div class="logo">Nexus<span>.</span></div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>重塑数字边界</h1>
+            <p>打破刻板的传统模板，用光影、空间和不对称网格，构建属于未来的视觉体验。Less is more, but with aesthetics.</p>
+        </section>
+
+        <section class="bento-container" id="grid">
+            <div class="bento-card card-large">
+                <div class="card-icon">✨</div>
+                <h3>Bento UI</h3>
+                <p>起源于 Apple 的便当盒设计语言，将复杂信息完美收纳于圆角矩阵中，呈现极致的秩序美。</p>
+            </div>
+            <div class="bento-card card-wide">
+                <div class="card-icon">🔮</div>
+                <h3>Glassmorphism</h3>
+                <p>透过毛玻璃的质感，背景的光晕隐约可见，打造呼吸感十足的空间层次。</p>
+            </div>
+            <div class="bento-card card-square">
+                <div class="card-icon">⚡</div>
+                <h3>Micro-interactions</h3>
+                <p>如丝般顺滑的非线性动画与悬浮反馈。</p>
+            </div>
+            <div class="bento-card card-square">
+                <div class="card-icon">🖋</div>
+                <h3>Typography</h3>
+                <p>克制的字体排印，留白即是艺术。</p>
+            </div>
+            <div class="bento-card card-wide">
+                <div class="card-icon">🌌</div>
+                <h3>Dynamic Light</h3>
+                <p>鼠标掠过卡片时，跟随指针的动态光晕，赋予界面生命力。</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 1. 导航栏滚动模糊效果
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // 2. Bento 卡片随鼠标移动的光晕效果 (Apple 官网常用质感)
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // 3. 滚动进入视口时的平滑渐显动画 (Intersection Observer)
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // 添加延迟实现阶梯式浮现
+                    setTimeout(() => {
+                        entry.target.style.animation = `fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards`;
+                    }, index * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.bento-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
